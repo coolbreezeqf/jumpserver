@@ -273,11 +273,11 @@ def send_mail_retry(request):
     uuid_r = request.GET.get('uuid', '1')
     user = get_object(User, uuid=uuid_r)
     msg = u"""
-    跳板机地址： %s
+    跳板机地址： %s:%s
     用户名：%s
     重设密码：%s:%s/juser/password/forget/
     请登录web点击个人信息页面重新生成ssh密钥
-    """ % (URL, user.username, URL, PORT)
+    """ % (URL, PORT, user.username, URL, PORT)
 
     try:
         send_mail(u'邮件重发', msg, MAIL_FROM, [user.email], fail_silently=False)
@@ -299,8 +299,8 @@ def forget_password(request):
             hash_encode = PyCrypt.md5_crypt(str(user.uuid) + str(timestamp) + KEY)
             msg = u"""
             Hi %s, 请点击下面链接重设密码！
-            %s/juser/password/reset/?uuid=%s&timestamp=%s&hash=%s
-            """ % (user.name, URL, user.uuid, timestamp, hash_encode)
+            %s:%s/juser/password/reset/?uuid=%s&timestamp=%s&hash=%s
+            """ % (user.name, URL, PORT, user.uuid, timestamp, hash_encode)
             send_mail('忘记跳板机密码', msg, MAIL_FROM, [email], fail_silently=False)
             msg = u'请登陆邮箱，点击邮件重设密码'
             return http_success(request, msg)
@@ -390,12 +390,12 @@ def user_edit(request):
             msg = u"""
             Hi %s:
                 您的信息已修改，请登录跳板机查看详细信息
-                地址：%s
+                地址：%s:%s
                 用户名： %s
                 密码：%s (如果密码为None代表密码为原密码)
                 权限：：%s
 
-            """ % (user.name, URL, user.username, password, user_role.get(role_post, u''))
+            """ % (user.name, URL, PORT, user.username, password, user_role.get(role_post, u''))
             send_mail('您的信息已修改', msg, MAIL_FROM, [email], fail_silently=False)
 
         return HttpResponseRedirect(reverse('user_list'))
