@@ -167,10 +167,12 @@ def user_add_mail(user, kwargs):
         您的用户名： %s
         您的权限： %s
         您的web登录密码： %s
+        web登录地址：%s:%s
         您的ssh密钥文件密码： %s
         密钥下载地址： %s:%s/juser/key/down/?uuid=%s
         说明： 请登陆跳板机后台下载密钥, 然后使用密钥登陆跳板机！
-    """ % (user.name, user.username, user_role.get(user.role, u'普通用户'),
+        JMS跳板机使用说明：http://cf.dawanju.net/pages/viewpage.action?pageId=12452775
+    """ % (user.name, user.username, user_role.get(user.role, u'普通用户'), URL, PORT,
            kwargs.get('password'), kwargs.get('ssh_key_pwd'), URL, PORT, user.uuid)
     send_mail(mail_title, mail_msg, MAIL_FROM, [user.email], fail_silently=False)
 
@@ -191,12 +193,12 @@ def get_display_msg(user, password='', ssh_key_pwd='', send_mail_need=False):
         msg = u'添加用户 %s 成功！ 用户密码已发送到 %s 邮箱！' % (user.name, user.email)
     else:
         msg = u"""
-        跳板机地址： %s <br />
+        跳板机地址： %s:%s <br />
         用户名：%s <br />
         密码：%s <br />
         密钥密码：%s <br />
         密钥下载url: %s/juser/key/down/?uuid=%s <br />
         该账号密码可以登陆web和跳板机。
-        """ % (URL, user.username, password, ssh_key_pwd, URL, user.uuid)
+        """ % (URL, PORT, user.username, password, ssh_key_pwd, URL, user.uuid)
     return msg
 
